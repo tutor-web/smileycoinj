@@ -3301,7 +3301,7 @@ public class Wallet implements Serializable, BlockChainListener, PeerFilterProvi
             registration.executor.execute(new Runnable() {
                 @Override
                 public void run() {
-                    registration.listener.onKeysAdded(Wallet.this, keys);
+                    registration.listener.onKeysAdded(keys);
                 }
             });
         }
