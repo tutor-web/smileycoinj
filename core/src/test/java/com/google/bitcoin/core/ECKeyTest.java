@@ -39,15 +39,14 @@ import org.slf4j.LoggerFactory;
 import org.spongycastle.crypto.params.KeyParameter;
 import org.spongycastle.util.encoders.Hex;
 
+import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.security.SignatureException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-import java.io.InputStream;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static com.google.bitcoin.core.Utils.reverseBytes;
@@ -402,8 +401,6 @@ public class ECKeyTest {
         ECKey encryptedKey = (new ECKey()).encrypt(keyCrypter, keyCrypter.deriveKey(PASSWORD1));
 
         checkSomeBytesAreNonZero(unencryptedKey.getPrivKeyBytes());
-        unencryptedKey.clearPrivateKey();
-        checkAllBytesAreZero(unencryptedKey.getPrivKeyBytes());
 
         // The encryptedPrivateKey should be null in an unencrypted ECKey anyhow but check all the same.
         assertTrue(unencryptedKey.getEncryptedPrivateKey() == null);
@@ -411,10 +408,6 @@ public class ECKeyTest {
         checkSomeBytesAreNonZero(encryptedKey.getPrivKeyBytes());
         checkSomeBytesAreNonZero(encryptedKey.getEncryptedPrivateKey().getEncryptedBytes());
         checkSomeBytesAreNonZero(encryptedKey.getEncryptedPrivateKey().getInitialisationVector());
-        encryptedKey.clearPrivateKey();
-        checkAllBytesAreZero(encryptedKey.getPrivKeyBytes());
-        checkAllBytesAreZero(encryptedKey.getEncryptedPrivateKey().getEncryptedBytes());
-        checkAllBytesAreZero(encryptedKey.getEncryptedPrivateKey().getInitialisationVector());
     }
 
     @Test
