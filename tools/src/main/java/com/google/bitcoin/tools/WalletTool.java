@@ -378,8 +378,8 @@ public class WalletTool {
                     BigInteger value = Utils.toNanoCoins(parts[1]);
                     if (destination.startsWith("04") && (destination.length() == 130 || destination.length() == 66)) {
                         // Treat as a raw public key.
-                        BigInteger pubKey = new BigInteger(destination, 16);
-                        ECKey key = new ECKey(null, pubKey);
+                        byte[] pubKey = new BigInteger(destination, 16).toByteArray();
+                        ECKey key = ECKey.fromPublicOnly(pubKey);
                         t.addOutput(value, key);
                     } else {
                         // Treat as an address.
@@ -658,7 +658,7 @@ public class WalletTool {
                     System.err.println("Could not understand --privkey as either hex or base58: " + data);
                     return;
                 }
-                key = new ECKey(new BigInteger(1, decode));
+                key = ECKey.fromPrivate(new BigInteger(1, decode));
             }
             if (options.has("pubkey")) {
                 // Give the user a hint.
@@ -667,7 +667,7 @@ public class WalletTool {
             key.setCreationTimeSeconds(creationTimeSeconds);
         } else if (options.has("pubkey")) {
             byte[] pubkey = Utils.parseAsHexOrBase58((String) options.valueOf("pubkey"));
-            key = new ECKey(null, pubkey);
+            key = ECKey.fromPublicOnly(pubkey);
             key.setCreationTimeSeconds(creationTimeSeconds);
         } else {
             // Freshly generated key.
