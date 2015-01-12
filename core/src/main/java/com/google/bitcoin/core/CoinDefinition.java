@@ -1,9 +1,7 @@
 package com.google.bitcoin.core;
 
 import java.math.BigInteger;
-import java.util.Date;
 import java.util.Map;
-import java.util.Vector;
 
 /**
  * Created with IntelliJ IDEA.
@@ -164,18 +162,15 @@ public class CoinDefinition {
             "dgc2.seed.nodes.mywl.lt",
             "dgc3.seed.nodes.mywl.lt",
             "dgc4.seed.nodes.mywl.lt",
-            //"direct.crypto-expert.com",         //offline
-            //"207.12.89.119",                    //offline
-            //"198.50.30.145",                    //offline
-
-            "178.237.35.34",
+            "digitalcoin.co",
+            "game.digitalcoin.co",
+            "dev.digitalcoin.co",
+            "178.62.28.81",
+             "178.237.35.34",
             "dgc.kadaplace.com",
-            //"dnsseed.digitalcoin.co",            //offline
-            //"dnsseed.rc.altcointech.net",
             "54.208.77.156",
             "68.14.170.140",
-
-    };
+     };
 
     public static int minBroadcastConnections = 1;   //0 for default; we need more peers.
 

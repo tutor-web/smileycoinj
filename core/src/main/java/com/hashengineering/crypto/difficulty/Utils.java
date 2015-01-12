@@ -1,4 +1,4 @@
-package crypto.difficulty;
+package com.hashengineering.crypto.difficulty;
 
 import com.google.bitcoin.core.Sha256Hash;
 import com.google.bitcoin.core.StoredBlock;
@@ -56,7 +56,7 @@ public class Utils {
         double lastDiff = ConvertBitsToDouble(currentBlock.getHeader().getDifficultyTarget());
 
         StoredBlock block = currentBlock;
-        for (int i = 0; i < 10; ++i)
+        for (int i = 0; i < 25; ++i)
         {
             try {
                 block = block.getPrev(blockStore);
