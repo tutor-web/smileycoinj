@@ -18,17 +18,18 @@
 
 package org.bitcoinj.uri;
 
+import com.google.common.collect.ImmutableList;
 import org.bitcoinj.core.Address;
+import org.bitcoinj.core.CoinDefinition;
+import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.params.TestNet3Params;
-import com.google.common.collect.ImmutableList;
 import org.junit.Test;
-import org.bitcoinj.core.CoinDefinition;
 
 import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
 
-import static org.bitcoinj.core.Coin.*;
+import static org.bitcoinj.core.Coin.CENT;
+import static org.bitcoinj.core.Coin.parseCoin;
 import static org.junit.Assert.*;
 
 public class BitcoinURITest {
@@ -366,7 +367,7 @@ public class BitcoinURITest {
     @Test(expected = BitcoinURIParseException.class)
     public void testBad_TooLargeAmount() throws BitcoinURIParseException {
         new BitcoinURI(MainNetParams.get(), BitcoinURI.BITCOIN_SCHEME + ":" + MAINNET_GOOD_ADDRESS
-                + "?amount="+(CoinDefinition.MAX_MONEY.multiply(BigInteger.valueOf(5))));
+                + "?amount="+(NetworkParameters.MAX_MONEY.multiply(5)));
     }
 
     @Test
