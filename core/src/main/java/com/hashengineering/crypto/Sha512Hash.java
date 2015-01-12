@@ -16,8 +16,8 @@
 
 package com.hashengineering.crypto;
 
-import com.google.bitcoin.core.Sha256Hash;
-import com.google.bitcoin.core.Utils;
+import org.bitcoinj.core.Sha256Hash;
+import org.bitcoinj.core.Utils;
 import com.google.common.io.ByteStreams;
 import org.spongycastle.util.encoders.Hex;
 
@@ -112,7 +112,7 @@ public class Sha512Hash implements Serializable, Comparable {
 
     @Override
     public String toString() {
-        return Utils.bytesToHexString(bytes);
+        return Utils.HEX.encode(bytes);
     }
 
     /**

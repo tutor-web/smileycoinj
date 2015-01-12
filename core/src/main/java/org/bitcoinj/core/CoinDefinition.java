@@ -116,11 +116,11 @@ public class CoinDefinition {
             return value * 55 / 73;
     }
     public static int spendableCoinbaseDepth = 5; //main.h: static const int COINBASE_MATURITY
-    public static final BigInteger MAX_MONEY = BigInteger.valueOf(200000000).multiply(Utils.COIN);                 //main.h:  MAX_MONEY
+    public static final int MAX_MONEY = 200000000;//).multiply(Utils.COIN);                 //main.h:  MAX_MONEY
     //public static final String MAX_MONEY_STRING = "200000000";     //main.h:  MAX_MONEY
 
-    public static final BigInteger DEFAULT_MIN_TX_FEE = BigInteger.valueOf(10000000);   // MIN_TX_FEE
-    public static final BigInteger DUST_LIMIT = BigInteger.valueOf(1000000); //main.h CTransaction::GetMinFee        0.01 coins
+    public static final Coin DEFAULT_MIN_TX_FEE = Coin.valueOf(10000000);   // MIN_TX_FEE
+    public static final Coin DUST_LIMIT = Coin.valueOf(1000000); //main.h CTransaction::GetMinFee        0.01 coins
 
     public static final int PROTOCOL_VERSION = 3000000;          //version.h PROTOCOL_VERSION
     public static final int MIN_PROTOCOL_VERSION = 3000000;        //version.h MIN_PROTO_VERSION - eliminate 60001 which are on the wrong fork
@@ -197,7 +197,7 @@ public class CoinDefinition {
     { return height >= nInflationFixHeight;}
 
     //main.cpp GetBlockValue(height, fee)
-    public static final BigInteger GetBlockReward(int height)
+    /*public static final BigInteger GetBlockReward(int height)
     {
         int COIN = 1;
         BigInteger nSubsidy = Utils.toNanoCoins(15, 0);
@@ -247,7 +247,7 @@ public class CoinDefinition {
             return nSubsidy.shiftRight(height / subsidyDecreaseBlockCount);
         }
         return nSubsidy;
-    }
+    } */
 
     public static int subsidyDecreaseBlockCount = 4730400;     //main.cpp GetBlockValue(height, fee)
 

@@ -16,7 +16,8 @@
 
 package com.google.bitcoin.net.discovery;
 
-import com.google.bitcoin.core.*;
+import org.bitcoinj.core.*;
+import org.bitcoinj.net.discovery.*;
 import com.google.common.annotations.VisibleForTesting;
 import net.jcip.annotations.GuardedBy;
 import org.slf4j.LoggerFactory;

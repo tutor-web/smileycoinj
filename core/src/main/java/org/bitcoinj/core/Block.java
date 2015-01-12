@@ -16,11 +16,11 @@
 
 package org.bitcoinj.core;
 
-import org.bitcoinj.script.Script;
-import org.bitcoinj.script.ScriptBuilder;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import org.bitcoinj.script.Script;
+import org.bitcoinj.script.ScriptBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,16 +35,9 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-<<<<<<< HEAD:core/src/main/java/com/google/bitcoin/core/Block.java
-import static com.google.bitcoin.core.Utils.doubleDigest;
-import static com.google.bitcoin.core.Utils.doubleDigestTwoBuffers;
-import static com.google.bitcoin.core.Utils.scryptDigest;
-import static com.hashengineering.crypto.X11.x11Digest;
-=======
 import static org.bitcoinj.core.Coin.FIFTY_COINS;
 import static org.bitcoinj.core.Utils.doubleDigest;
 import static org.bitcoinj.core.Utils.doubleDigestTwoBuffers;
->>>>>>> upstream/release-0.12:core/src/main/java/org/bitcoinj/core/Block.java
 
 /**
  * <p>A block is a group of transactions, and is one of the fundamental data structures of the Bitcoin system.
@@ -94,7 +87,7 @@ public class Block extends Message {
 
     /** Stores the hash of the block. If null, getHash() will recalculate it. */
     private transient Sha256Hash hash;
-    private transient Sha256Hash scryptHash;
+    //private transient Sha256Hash scryptHash;
 
     private transient boolean headerParsed;
     private transient boolean transactionsParsed;
@@ -175,15 +168,8 @@ public class Block extends Message {
      * <p>The half-life is controlled by {@link org.bitcoinj.core.NetworkParameters#getSubsidyDecreaseBlockCount()}.
      * </p>
      */
-<<<<<<< HEAD:core/src/main/java/com/google/bitcoin/core/Block.java
-    // TODO:  Coin Specific Code
-    public BigInteger getBlockInflation(int height) {
-        //return Utils.toNanoCoins(50, 0).shiftRight(height / params.getSubsidyDecreaseBlockCount());
-        return /*Utils.toNanoCoins(*/CoinDefinition.GetBlockReward(height)/*, 0)*/;
-=======
     public Coin getBlockInflation(int height) {
-        return FIFTY_COINS.shiftRight(height / params.getSubsidyDecreaseBlockCount());
->>>>>>> upstream/release-0.12:core/src/main/java/org/bitcoinj/core/Block.java
+        return params.getBlockInflation(height);
     }
 
     private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
@@ -531,7 +517,7 @@ public class Block extends Message {
         }
     }
 
-    private Sha256Hash calculateScryptHash() {
+    /*private Sha256Hash calculateScryptHash() {
         try {
             ByteArrayOutputStream bos = new UnsafeByteArrayOutputStream(HEADER_SIZE);
             writeHeader(bos);
@@ -548,7 +534,7 @@ public class Block extends Message {
         } catch (IOException e) {
             throw new RuntimeException(e); // Cannot happen.
         }
-    }
+    }*/
     /**
      * Returns the hash of the block (which for a valid, solved block should be below the target) in the form seen on
      * the block explorer. If you call this on block 1 in the production chain
@@ -558,9 +544,9 @@ public class Block extends Message {
         return getHash().toString();
     }
 
-    public String getScryptHashAsString() {
-        return getScryptHash().toString();
-    }
+    //public String getScryptHashAsString() {
+    //    return getScryptHash().toString();
+    //}
 
     /**
      * Returns the hash of the block (which for a valid, solved block should be
@@ -573,7 +559,7 @@ public class Block extends Message {
         return hash;
     }
 
-    public Sha256Hash getScryptHash() {
+    /*public Sha256Hash getScryptHash() {
         if (scryptHash == null)
             scryptHash = calculateScryptHash();
         return scryptHash;
@@ -583,7 +569,7 @@ public class Block extends Message {
         if (scryptHash == null)
             scryptHash = calculateX11Hash();
         return scryptHash;
-    }
+    }*/
 
 
     /**
@@ -702,31 +688,14 @@ public class Block extends Message {
         // field is of the right value. This requires us to have the preceeding blocks.
         BigInteger target = getDifficultyTargetAsInteger();
         BigInteger h = null;
-        int algo = getAlgo();
 
-        switch (algo)
-        {
-            case ALGO_SHA256D:
-                h = getHash().toBigInteger();
-                break;
-            case ALGO_SCRYPT:
-            {
-                h = getScryptHash().toBigInteger();
-                break;
-            }
-            case ALGO_X11:
-                h = getX11Hash().toBigInteger();
-
-                break;
-            default:
-                h = getHash().toBigInteger();
-                break;
-        }
+        Sha256Hash pow = params.getProofOfWork(this);
+        h = pow.toBigInteger();
 
         if (h.compareTo(target) > 0) {
             // Proof of work check failed!
             if (throwException)
-                throw new VerificationException("Hash is higher than target: " + getScryptHashAsString() + " vs "
+                throw new VerificationException("Hash is higher than target: " + pow.toString() + " vs "
                         + target.toString(16));
             else
                 return false;
@@ -957,7 +926,7 @@ public class Block extends Message {
         unCacheHeader();
         this.prevBlockHash = prevBlockHash;
         this.hash = null;
-        this.scryptHash = null;
+        //this.scryptHash = null;
     }
 
     /**
@@ -980,7 +949,7 @@ public class Block extends Message {
         unCacheHeader();
         this.time = time;
         this.hash = null;
-        this.scryptHash = null;
+        //this.scryptHash = null;
     }
 
     /**
@@ -1002,7 +971,7 @@ public class Block extends Message {
         unCacheHeader();
         this.difficultyTarget = compactForm;
         this.hash = null;
-        this.scryptHash = null;
+        //this.scryptHash = null;
     }
 
     /**
@@ -1019,7 +988,7 @@ public class Block extends Message {
         unCacheHeader();
         this.nonce = nonce;
         this.hash = null;
-        this.scryptHash = null;
+        //this.scryptHash = null;
     }
 
     /** Returns an immutable list of transactions held in this block. */
@@ -1161,38 +1130,14 @@ public class Block extends Message {
         return transactionBytesValid;
     }
 
-    public static final int ALGO_SHA256D = 0;
-    public static final int ALGO_SCRYPT  = 1;
-    public static final int ALGO_X11 = 2;
-    public static final int NUM_ALGOS = 3;
-
-    public static int BLOCK_VERSION_DEFAULT = 1;
-
-    // algo
-    public static final int             BLOCK_VERSION_ALGO           = (7 << 9);
-    public static final int             BLOCK_VERSION_SHA256D         = (1 << 9);
-    public static final int             BLOCK_VERSION_X11        = (2 << 9);
 
 
-    public static int GetAlgo(long nVersion)
-    {
-        switch ((int)nVersion & BLOCK_VERSION_ALGO)
-        {
-            case 1:
-                return ALGO_SCRYPT;
-            case BLOCK_VERSION_SHA256D:
-                return ALGO_SHA256D;
-            case BLOCK_VERSION_X11:
-                return ALGO_X11;
-        }
-        return ALGO_SCRYPT;
+    public void removeTransaction(int index) {
+        unCacheTransactions();
+        Transaction t = transactions.remove(index);
+        t.setParent(null);
+        adjustLength(0, (VarInt.sizeOf(transactions.size()) - VarInt.sizeOf(transactions.size() + 1)) - t.length);
+        merkleRoot = null;
+        hash = null;
     }
-
-    public int getAlgo()
-    {
-        return GetAlgo(version);
-    }
-    String [] algoNames = {"sha256d", "scrypt", "x11"};
-
-    public String getAlgoName() { return algoNames[GetAlgo(version)]; }
 }

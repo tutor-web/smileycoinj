@@ -17,18 +17,22 @@
 
 package org.bitcoinj.core;
 
+import com.google.common.base.Objects;
 import org.bitcoinj.params.*;
 import org.bitcoinj.script.Script;
 import org.bitcoinj.script.ScriptOpCodes;
-import com.google.common.base.Objects;
+import org.bitcoinj.store.BlockStore;
+import org.bitcoinj.store.BlockStoreException;
 
 import javax.annotation.Nullable;
 import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
 import java.math.BigInteger;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
-import static org.bitcoinj.core.Coin.*;
+import static org.bitcoinj.core.Coin.COIN;
+import static org.bitcoinj.core.Coin.FIFTY_COINS;
 
 /**
  * <p>NetworkParameters contains the data needed for working with an instantiation of a Bitcoin chain.</p>
@@ -47,26 +51,16 @@ public abstract class NetworkParameters implements Serializable {
     /**
      * The alert signing key originally owned by Satoshi, and now passed on to Gavin along with a few others.
      */
-<<<<<<< HEAD:core/src/main/java/com/google/bitcoin/core/NetworkParameters.java
-    public static final byte[] SATOSHI_KEY = Hex.decode(CoinDefinition.SATOSHI_KEY); //Hex.decode("04fc9702847840aaf195de8442ebecedf5b095cdbb9bc716bda9110971b28a49e0ead8564ff0db22209e0374782c093bb899692d524e9d6a6956e7c5ecbcd68284");
-=======
-    public static final byte[] SATOSHI_KEY = Utils.HEX.decode("04fc9702847840aaf195de8442ebecedf5b095cdbb9bc716bda9110971b28a49e0ead8564ff0db22209e0374782c093bb899692d524e9d6a6956e7c5ecbcd68284");
->>>>>>> upstream/release-0.12:core/src/main/java/org/bitcoinj/core/NetworkParameters.java
+    public static final byte[] SATOSHI_KEY = Utils.HEX.decode(CoinDefinition.SATOSHI_KEY); //Hex.decode("04fc9702847840aaf195de8442ebecedf5b095cdbb9bc716bda9110971b28a49e0ead8564ff0db22209e0374782c093bb899692d524e9d6a6956e7c5ecbcd68284");
 
     /** The string returned by getId() for the main, production network where people trade things. */
     public static final String ID_MAINNET = CoinDefinition.ID_MAINNET; //"org.bitcoin.production";
     /** The string returned by getId() for the testnet. */
-<<<<<<< HEAD:core/src/main/java/com/google/bitcoin/core/NetworkParameters.java
     public static final String ID_TESTNET = CoinDefinition.ID_TESTNET; //"org.bitcoin.test";
     /** Unit test network. */
-    public static final String ID_UNITTESTNET = CoinDefinition.ID_UNITTESTNET; //"com.google.bitcoin.unittest";
-=======
-    public static final String ID_TESTNET = "org.bitcoin.test";
+    public static final String ID_UNITTESTNET = CoinDefinition.ID_UNITTESTNET; //"org.bitcoinj.unittest";
     /** The string returned by getId() for regtest mode. */
     public static final String ID_REGTEST = "org.bitcoin.regtest";
-    /** Unit test network. */
-    public static final String ID_UNITTESTNET = "org.bitcoinj.unittest";
->>>>>>> upstream/release-0.12:core/src/main/java/org/bitcoinj/core/NetworkParameters.java
 
     /** The string used by the payment protocol to represent the main net. */
     public static final String PAYMENT_PROTOCOL_ID_MAINNET = "main";
@@ -106,44 +100,14 @@ public abstract class NetworkParameters implements Serializable {
         alertSigningKey = SATOSHI_KEY;
         genesisBlock = createGenesis(this);
     }
-    //TODO:  put these bytes into the CoinDefinition
+
     private static Block createGenesis(NetworkParameters n) {
         Block genesisBlock = new Block(n);
         Transaction t = new Transaction(n);
         try {
             // A script containing the difficulty bits and the following message:
             //
-<<<<<<< HEAD:core/src/main/java/com/google/bitcoin/core/NetworkParameters.java
-            //   coin dependent
-            byte[] bytes = Hex.decode(CoinDefinition.genesisTxInBytes);
-            //byte[] bytes = Hex.decode("04ffff001d0104294469676974616c636f696e2c20412043757272656e637920666f722061204469676974616c20416765");
-            t.addInput(new TransactionInput(n, t, bytes));
-            ByteArrayOutputStream scriptPubKeyBytes = new ByteArrayOutputStream();
-            Script.writeBytes(scriptPubKeyBytes, Hex.decode(CoinDefinition.genesisTxOutBytes));
-                    //("04678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5f"));
-            scriptPubKeyBytes.write(ScriptOpCodes.OP_CHECKSIG);
-            t.addOutput(new TransactionOutput(n, t, Utils.toNanoCoins(CoinDefinition.genesisBlockValue, 0), scriptPubKeyBytes.toByteArray()));
-        } catch (Exception e) {
-            // Cannot happen.
-            throw new RuntimeException(e);
-        }
-        genesisBlock.addTransaction(t);
-        return genesisBlock;
-    }
-    private static Block createGenesis1(NetworkParameters n) {
-        Block genesisBlock = new Block(n);
-        Transaction t = new Transaction(n);
-        try {
-            // A script containing the difficulty bits and the following message:
-            //
-            //   "Digitalcoin, A Currency for a Digital Age"
-            byte[] bytes = Hex.decode
-                    ("04b217bb4e022309");
-            t.addInput(new TransactionInput(n, t, bytes));
-            ByteArrayOutputStream scriptPubKeyBytes = new ByteArrayOutputStream();
-            Script.writeBytes(scriptPubKeyBytes, Hex.decode
-                    ("04a5814813115273a109cff99907ba4a05d951873dae7acb6c973d0c9e7c88911a3dbc9aa600deac241b91707e7b4ffb30ad91c8e56e695a1ddf318592988afe0a"));
-=======
+
             //   "The Times 03/Jan/2009 Chancellor on brink of second bailout for banks"
             byte[] bytes = Utils.HEX.decode
                     ("04ffff001d0104455468652054696d65732030332f4a616e2f32303039204368616e63656c6c6f72206f6e206272696e6b206f66207365636f6e64206261696c6f757420666f722062616e6b73");
@@ -151,7 +115,6 @@ public abstract class NetworkParameters implements Serializable {
             ByteArrayOutputStream scriptPubKeyBytes = new ByteArrayOutputStream();
             Script.writeBytes(scriptPubKeyBytes, Utils.HEX.decode
                     ("04678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5f"));
->>>>>>> upstream/release-0.12:core/src/main/java/org/bitcoinj/core/NetworkParameters.java
             scriptPubKeyBytes.write(ScriptOpCodes.OP_CHECKSIG);
             t.addOutput(new TransactionOutput(n, t, FIFTY_COINS, scriptPubKeyBytes.toByteArray()));
         } catch (Exception e) {
@@ -178,16 +141,12 @@ public abstract class NetworkParameters implements Serializable {
     /**
      * The maximum number of coins to be generated
      */
-    public static final long MAX_COINS = 21000000;
+    public static final long MAX_COINS = CoinDefinition.MAX_MONEY;  //21000000;
 
     /**
      * The maximum money to be generated
      */
-<<<<<<< HEAD:core/src/main/java/com/google/bitcoin/core/NetworkParameters.java
-    public static final BigInteger MAX_MONEY = CoinDefinition.MAX_MONEY;
-=======
     public static final Coin MAX_MONEY = COIN.multiply(MAX_COINS);
->>>>>>> upstream/release-0.12:core/src/main/java/org/bitcoinj/core/NetworkParameters.java
 
     /** Alias for TestNet3Params.get(), use that instead. */
     @Deprecated
@@ -391,5 +350,20 @@ public abstract class NetworkParameters implements Serializable {
      */
     public byte[] getAlertSigningKey() {
         return alertSigningKey;
+    }
+
+    public boolean checkDifficultyTransitions(StoredBlock storedPrev, Block nextBlock, BlockStore blockStore) throws BlockStoreException, VerificationException
+    { return false; }
+
+    public  boolean checkTestnetDifficulty(StoredBlock storedPrev, Block prev, Block next, BlockStore blockStore) throws VerificationException, BlockStoreException {
+        return false;
+    }
+    public Coin getBlockInflation(int height)
+    {
+        return FIFTY_COINS.shiftRight(height / this.getSubsidyDecreaseBlockCount());
+    }
+    public Sha256Hash getProofOfWork(Block block)
+    {
+        return block.getHash();
     }
 }

@@ -19,6 +19,7 @@ package org.bitcoinj.core;
 
 import org.bitcoinj.script.Script;
 import org.bitcoinj.script.ScriptBuilder;
+import org.bitcoinj.script.ScriptOpCodes;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

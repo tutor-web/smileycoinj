@@ -17,12 +17,10 @@
 package org.litecoin;
 
 import com.google.bitcoin.net.discovery.PeerDBDiscovery;
-import com.google.bitcoin.net.discovery.PeerDiscoveryException;
+import org.bitcoinj.core.*;
 
 import java.io.File;
 import java.math.BigInteger;
-
-import org.bitcoinj.core.CoinDefinition;
 
 /**
  * A version of PeerDBDiscovery that only returns nodes which support Bloom filters according to Litecoin's BLOOM bit

@@ -17,21 +17,15 @@
 
 package org.bitcoinj.tools;
 
+import com.google.common.base.Charsets;
 import org.bitcoinj.core.*;
-import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.store.BlockStore;
 import org.bitcoinj.store.MemoryBlockStore;
 import org.bitcoinj.utils.BriefLogFormatter;
 import org.bitcoinj.utils.Threading;
-import com.google.common.base.Charsets;
+import org.digitalcoinj.DigitalcoinParams;
 
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.security.DigestOutputStream;
@@ -40,8 +34,6 @@ import java.util.Date;
 import java.util.TreeMap;
 
 import static com.google.common.base.Preconditions.checkState;
-
-import org.digitalcoinj.params.MainNetParams;
 
 /**
  * Downloads and verifies a full chain from your local peer, emitting checkpoints at each difficulty transition period
@@ -148,29 +140,16 @@ public class BuildCheckpoints {
         CheckpointManager manager = new CheckpointManager(PARAMS, new FileInputStream(file));
         checkState(manager.numCheckpoints() == expectedSize);
 
-<<<<<<< HEAD:tools/src/main/java/com/google/bitcoin/tools/BuildCheckpoints.java
-        if (PARAMS.getId() == NetworkParameters.ID_MAINNET) {
-            //StoredBlock test = manager.getCheckpointBefore(1390500000); // Thu Jan 23 19:00:00 CET 2014
-            //checkState(test.getHeight() == 280224);
-            //checkState(test.getHeader().getHashAsString()
-            //        .equals("5a4e378e1fd0cc77d9e4cfe84216366908e9352b3b5a661c7f0b590e4b077e27"));
-        } else if (PARAMS.getId() == NetworkParameters.ID_TESTNET) {
-            //StoredBlock test = manager.getCheckpointBefore(1390500000); // Thu Jan 23 19:00:00 CET 2014
-            //checkState(test.getHeight() == 167328);
-            //checkState(test.getHeader().getHashAsString()
-            //        .equals("0000000000035ae7d5025c2538067fe7adb1cf5d5d9c31b024137d9090ed13a9"));
-=======
         if (PARAMS.getId().equals(NetworkParameters.ID_MAINNET)) {
-            StoredBlock test = manager.getCheckpointBefore(1390500000); // Thu Jan 23 19:00:00 CET 2014
-            checkState(test.getHeight() == 280224);
-            checkState(test.getHeader().getHashAsString()
-                    .equals("00000000000000000b5d59a15f831e1c45cb688a4db6b0a60054d49a9997fa34"));
+        //    StoredBlock test = manager.getCheckpointBefore(1390500000); // Thu Jan 23 19:00:00 CET 2014
+        //    checkState(test.getHeight() == 280224);
+        //    checkState(test.getHeader().getHashAsString()
+        //            .equals("00000000000000000b5d59a15f831e1c45cb688a4db6b0a60054d49a9997fa34"));
         } else if (PARAMS.getId().equals(NetworkParameters.ID_TESTNET)) {
-            StoredBlock test = manager.getCheckpointBefore(1390500000); // Thu Jan 23 19:00:00 CET 2014
-            checkState(test.getHeight() == 167328);
-            checkState(test.getHeader().getHashAsString()
-                    .equals("0000000000035ae7d5025c2538067fe7adb1cf5d5d9c31b024137d9090ed13a9"));
->>>>>>> upstream/release-0.12:tools/src/main/java/org/bitcoinj/tools/BuildCheckpoints.java
+        //    StoredBlock test = manager.getCheckpointBefore(1390500000); // Thu Jan 23 19:00:00 CET 2014
+        //    checkState(test.getHeight() == 167328);
+        //    checkState(test.getHeader().getHashAsString()
+        //            .equals("0000000000035ae7d5025c2538067fe7adb1cf5d5d9c31b024137d9090ed13a9"));
         }
     }
 }

@@ -145,13 +145,7 @@ public class Utils {
         return doubleDigest(input, 0, input.length);
     }
 
-    public static byte[] scryptDigest(byte[] input) {
-        try {
-            return SCrypt.scrypt(input, input, 1024, 1, 1, 32);
-        } catch (Exception e) {
-            return null;
-        }
-    }
+
 
     /**
      * Calculates the SHA-256 hash of the given byte range, and then hashes the resulting hash again. This is

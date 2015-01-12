@@ -215,7 +215,7 @@ public class BitcoindComparisonTool {
                 bitcoind.ping().get();
                 if (!chain.getChainHead().getHeader().getHash().equals(bitcoindChainHead)) {
                     differingBlocks++;
-                    log.error("bitcoind and digitalcoinj acceptance differs on block \"" + block.ruleName + "\"");
+                    log.error("bitcoind and bitcoinj acceptance differs on block \"" + block.ruleName + "\"");
                 }
                 log.info("Block \"" + block.ruleName + "\" completed processing");
             } else if (rule instanceof MemoryPoolState) {
@@ -263,7 +263,7 @@ public class BitcoindComparisonTool {
         }
 
         log.info("Done testing.\n" +
-                "Blocks which were not handled the same between bitcoind/digitalcoinj: " + differingBlocks + "\n" +
+                "Blocks which were not handled the same between bitcoind/bitcoinj: " + differingBlocks + "\n" +
                 "Blocks which should/should not have been accepted but weren't/were: " + invalidBlocks + "\n" +
                 "Transactions which were/weren't in memory pool but shouldn't/should have been: " + mempoolRulesFailed + "\n" +
                 "UTXO query mismatches: " + utxoRulesFailed + "\n" +
