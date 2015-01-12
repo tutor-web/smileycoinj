@@ -1,6 +1,7 @@
 package com.google.bitcoin.core;
 
 import com.google.bitcoin.params.MainNetParams;
+import org.bitcoinj.core.CoinDefinition;
 import org.junit.Test;
 import org.spongycastle.util.encoders.Hex;
 
