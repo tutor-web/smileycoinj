@@ -18,11 +18,11 @@
 package com.google.bitcoin.tools;
 
 import com.google.bitcoin.core.*;
-import com.google.bitcoin.params.MainNetParams;
 import com.google.bitcoin.store.BlockStore;
 import com.google.bitcoin.store.MemoryBlockStore;
 import com.google.bitcoin.utils.BriefLogFormatter;
 import com.google.bitcoin.utils.Threading;
+import org.digitalcoinj.DigitalcoinParams;
 
 import java.io.DataOutputStream;
 import java.io.File;
@@ -43,7 +43,7 @@ import static com.google.common.base.Preconditions.checkState;
  */
 public class BuildCheckpoints {
 
-    private static final NetworkParameters PARAMS = MainNetParams.get();
+    private static final NetworkParameters PARAMS = DigitalcoinParams.get();//MainNetParams.get();
     private static final File CHECKPOINTS_FILE = new File("checkpoints");
 
     public static void main(String[] args) throws Exception {

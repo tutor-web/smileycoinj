@@ -169,6 +169,7 @@ public class Block extends Message {
      * <p>The half-life is controlled by {@link com.google.bitcoin.core.NetworkParameters#getSubsidyDecreaseBlockCount()}.
      * </p>
      */
+    // TODO:  Coin Specific Code
     public BigInteger getBlockInflation(int height) {
         //return Utils.toNanoCoins(50, 0).shiftRight(height / params.getSubsidyDecreaseBlockCount());
         return /*Utils.toNanoCoins(*/CoinDefinition.GetBlockReward(height)/*, 0)*/;
