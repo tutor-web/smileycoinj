@@ -30,16 +30,16 @@ public class UnitTestParams extends NetworkParameters {
         super();
         id = ID_UNITTESTNET;
         packetMagic = 0x0b110907;
-        addressHeader = CoinDefinition.testnetAddressHeader;
-        p2shHeader = CoinDefinition.testnetp2shHeader;
+        addressHeader = 111;
+        p2shHeader = 196;
         acceptableAddressCodes = new int[] { addressHeader, p2shHeader };
         maxTarget = new BigInteger("00ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", 16);
         genesisBlock.setTime(System.currentTimeMillis() / 1000);
         genesisBlock.setDifficultyTarget(Block.EASIEST_DIFFICULTY_TARGET);
         genesisBlock.solve();
-        port = CoinDefinition.TestPort;
+        port = 18333;
         interval = 10;
-        dumpedPrivateKeyHeader = 128 + CoinDefinition.testnetAddressHeader;
+        dumpedPrivateKeyHeader = 239;
         targetTimespan = 200000000;  // 6 years. Just a very big number.
         spendableCoinbaseDepth = 5;
         subsidyDecreaseBlockCount = 100;

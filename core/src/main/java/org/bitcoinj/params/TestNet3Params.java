@@ -38,15 +38,15 @@ public class TestNet3Params extends NetworkParameters {
         targetTimespan = TARGET_TIMESPAN;
         maxTarget = Utils.decodeCompactBits(0x1d00ffffL);
         port = 18333;
-        addressHeader = CoinDefinition.testnetAddressHeader;
-        p2shHeader = CoinDefinition.testnetp2shHeader;
+        addressHeader = 111;
+        p2shHeader = 196;
         acceptableAddressCodes = new int[] { addressHeader, p2shHeader };
-        dumpedPrivateKeyHeader = 128 + CoinDefinition.testnetAddressHeader;
-        genesisBlock.setTime(CoinDefinition.testnetGenesisBlockTime);
-        genesisBlock.setDifficultyTarget(CoinDefinition.testnetGenesisBlockDifficultyTarget);
-        genesisBlock.setNonce(CoinDefinition.testnetGenesisBlockNonce);
+        dumpedPrivateKeyHeader = 239;
+        genesisBlock.setTime(1296688602L);
+        genesisBlock.setDifficultyTarget(0x1d00ffffL);
+        genesisBlock.setNonce(414098458);
         spendableCoinbaseDepth = 100;
-        subsidyDecreaseBlockCount = CoinDefinition.subsidyDecreaseBlockCount;
+        subsidyDecreaseBlockCount = 210000;
         String genesisHash = genesisBlock.getHashAsString();
 
         checkState(genesisHash.equals("000000000933ea01ad0ee984209779baaec3ced90fa3f408719526f8d77f4943"));
