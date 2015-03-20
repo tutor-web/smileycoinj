@@ -23,6 +23,7 @@ import org.bitcoinj.script.Script;
 import org.bitcoinj.script.ScriptOpCodes;
 import org.bitcoinj.store.BlockStore;
 import org.bitcoinj.store.BlockStoreException;
+import org.digitalcoinj.DigitalcoinParams;
 
 import javax.annotation.Nullable;
 import java.io.ByteArrayOutputStream;
@@ -54,7 +55,8 @@ public abstract class NetworkParameters implements Serializable {
     public static final byte[] SATOSHI_KEY = Utils.HEX.decode(CoinDefinition.SATOSHI_KEY); //Hex.decode("04fc9702847840aaf195de8442ebecedf5b095cdbb9bc716bda9110971b28a49e0ead8564ff0db22209e0374782c093bb899692d524e9d6a6956e7c5ecbcd68284");
 
     /** The string returned by getId() for the main, production network where people trade things. */
-    public static final String ID_MAINNET = CoinDefinition.ID_MAINNET; //"org.bitcoin.production";
+    public static final String ID_MAINNET = CoinDefinition.ID_MAINNET;
+    public static final String ID_MAINNET_BTC = "org.bitcoin.production";
     /** The string returned by getId() for the testnet. */
     public static final String ID_TESTNET = CoinDefinition.ID_TESTNET; //"org.bitcoin.test";
     /** Unit test network. */
@@ -196,7 +198,7 @@ public abstract class NetworkParameters implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null /*|| getClass() != o.getClass()*/) return false;
         NetworkParameters other = (NetworkParameters) o;
         return getId().equals(other.getId());
     }
@@ -209,7 +211,10 @@ public abstract class NetworkParameters implements Serializable {
     /** Returns the network parameters for the given string ID or NULL if not recognized. */
     @Nullable
     public static NetworkParameters fromID(String id) {
+
         if (id.equals(ID_MAINNET)) {
+            return DigitalcoinParams.get();
+        } else if (id.equals(ID_MAINNET_BTC)) {
             return MainNetParams.get();
         } else if (id.equals(ID_TESTNET)) {
             return TestNet3Params.get();

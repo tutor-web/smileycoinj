@@ -52,7 +52,6 @@ import org.slf4j.LoggerFactory;
 import org.spongycastle.crypto.params.KeyParameter;
 
 import javax.annotation.Nullable;
-
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -61,7 +60,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import static com.google.common.base.Preconditions.*;
 
@@ -2528,7 +2526,7 @@ public class Wallet extends BaseTaggableObject implements Serializable, BlockCha
             StringBuilder builder = new StringBuilder();
             Coin estimatedBalance = getBalance(BalanceType.ESTIMATED);
             Coin availableBalance = getBalance(BalanceType.AVAILABLE);
-            builder.append(String.format("Wallet containing %s BTC (available: %s BTC) in:%n",
+            builder.append(String.format("Wallet containing %s "+CoinDefinition.coinTicker+" (available: %s "+CoinDefinition.coinTicker+") in:%n",
                     estimatedBalance.toPlainString(), availableBalance.toPlainString()));
             builder.append(String.format("  %d pending transactions%n", pending.size()));
             builder.append(String.format("  %d unspent transactions%n", unspent.size()));

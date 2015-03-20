@@ -16,17 +16,14 @@
 
 package org.bitcoinj.utils;
 
-import static org.bitcoinj.core.Coin.CENT;
-import static org.bitcoinj.core.Coin.COIN;
-import static org.bitcoinj.core.Coin.SATOSHI;
-import static org.bitcoinj.core.Coin.ZERO;
-import static org.junit.Assert.assertEquals;
+import org.bitcoinj.core.Coin;
+import org.bitcoinj.core.CoinDefinition;
+import org.junit.Test;
 
 import java.util.Locale;
 
-import org.junit.Test;
-
-import org.bitcoinj.core.Coin;
+import static org.bitcoinj.core.Coin.*;
+import static org.junit.Assert.assertEquals;
 
 public class MonetaryFormatTest {
 
@@ -210,25 +207,25 @@ public class MonetaryFormatTest {
 
     @Test
     public void standardCodes() throws Exception {
-        assertEquals("BTC 0.00", MonetaryFormat.BTC.format(Coin.ZERO).toString());
-        assertEquals("mBTC 0.00", MonetaryFormat.MBTC.format(Coin.ZERO).toString());
-        assertEquals("µBTC 0", MonetaryFormat.UBTC.format(Coin.ZERO).toString());
+        assertEquals(CoinDefinition.coinTicker+" 0.00", MonetaryFormat.BTC.format(Coin.ZERO).toString());
+        assertEquals("m"+CoinDefinition.coinTicker+" 0.00", MonetaryFormat.MBTC.format(Coin.ZERO).toString());
+        assertEquals("µ"+CoinDefinition.coinTicker+" 0", MonetaryFormat.UBTC.format(Coin.ZERO).toString());
     }
 
     @Test
     public void customCode() throws Exception {
-        assertEquals("dBTC 0", MonetaryFormat.UBTC.code(1, "dBTC").shift(1).format(Coin.ZERO).toString());
+        assertEquals("d"+CoinDefinition.coinTicker+" 0", MonetaryFormat.UBTC.code(1, "d"+CoinDefinition.coinTicker).shift(1).format(Coin.ZERO).toString());
     }
 
     @Test
     public void codeOrientation() throws Exception {
-        assertEquals("BTC 0.00", MonetaryFormat.BTC.prefixCode().format(Coin.ZERO).toString());
-        assertEquals("0.00 BTC", MonetaryFormat.BTC.postfixCode().format(Coin.ZERO).toString());
+        assertEquals(CoinDefinition.coinTicker+" 0.00", MonetaryFormat.BTC.prefixCode().format(Coin.ZERO).toString());
+        assertEquals("0.00 "+ CoinDefinition.coinTicker, MonetaryFormat.BTC.postfixCode().format(Coin.ZERO).toString());
     }
 
     @Test
     public void codeSeparator() throws Exception {
-        assertEquals("BTC@0.00", MonetaryFormat.BTC.codeSeparator('@').format(Coin.ZERO).toString());
+        assertEquals(CoinDefinition.coinTicker+"@0.00", MonetaryFormat.BTC.codeSeparator('@').format(Coin.ZERO).toString());
     }
 
     @Test(expected = NumberFormatException.class)

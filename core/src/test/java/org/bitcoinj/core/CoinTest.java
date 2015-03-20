@@ -16,16 +16,12 @@
 
 package org.bitcoinj.core;
 
-import static org.bitcoinj.core.Coin.*;
-import static org.bitcoinj.core.NetworkParameters.MAX_MONEY;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
-
 import org.junit.Assert;
 import org.junit.Test;
+
+import static org.bitcoinj.core.Coin.*;
+import static org.bitcoinj.core.NetworkParameters.MAX_MONEY;
+import static org.junit.Assert.*;
 
 public class CoinTest {
 
@@ -99,10 +95,10 @@ public class CoinTest {
 
     @Test
     public void testToFriendlyString() {
-        assertEquals("1.00 BTC", COIN.toFriendlyString());
-        assertEquals("1.23 BTC", valueOf(1, 23).toFriendlyString());
-        assertEquals("0.001 BTC", COIN.divide(1000).toFriendlyString());
-        assertEquals("-1.23 BTC", valueOf(1, 23).negate().toFriendlyString());
+        assertEquals("1.00 "+CoinDefinition.coinTicker, COIN.toFriendlyString());
+        assertEquals("1.23 "+CoinDefinition.coinTicker, valueOf(1, 23).toFriendlyString());
+        assertEquals("0.001 "+CoinDefinition.coinTicker, COIN.divide(1000).toFriendlyString());
+        assertEquals("-1.23 "+CoinDefinition.coinTicker, valueOf(1, 23).negate().toFriendlyString());
     }
 
     /**

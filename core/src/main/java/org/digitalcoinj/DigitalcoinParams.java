@@ -425,9 +425,9 @@ public class DigitalcoinParams extends NetworkParameters {
     {
         return getAlgo(block.getVersion());
     }
-    String [] algoNames = {"sha256d", "scrypt", "x11"};
+    protected static String [] algoNames = {"sha256d", "scrypt", "x11"};
 
-    public String getAlgoName(Block block) { return algoNames[getAlgo(block.getVersion())]; }
+    public static String getAlgoName(Block block) { return algoNames[getAlgo(block.getVersion())]; }
 
     public Sha256Hash getProofOfWork(Block header)
     {
