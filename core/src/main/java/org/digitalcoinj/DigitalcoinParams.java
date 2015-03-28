@@ -274,6 +274,7 @@ public class DigitalcoinParams extends NetworkParameters {
         // Limit adjustment step
         // Use medians to prevent time-warp attacks
         try {
+
             long nActualTimespan = blockStore.getMedianTimePast(storedPrev) - blockStore.getMedianTimePast(first);
             nActualTimespan = nAveragingTargetTimespan + (nActualTimespan - nAveragingTargetTimespan)/6;
             //LogPrintf("  nActualTimespan = %d before bounds\n", nActualTimespan);

@@ -319,7 +319,8 @@ public class SPVBlockStore implements BlockStore {
 
             cursor = cursor.getPrev(this);
 
-
+            if(cursor == null)
+                throw new BlockStoreException("previous block does not exist");
         }
         java.util.Arrays.sort(median);
         //std::sort(pbegin, pend);
