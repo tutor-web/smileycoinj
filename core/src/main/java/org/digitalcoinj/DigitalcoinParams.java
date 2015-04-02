@@ -2,6 +2,9 @@ package org.digitalcoinj;
 
 import com.lambdaworks.crypto.SCrypt;
 import org.bitcoinj.core.*;
+import org.bitcoinj.params.MainNetParams;
+import org.bitcoinj.params.Networks;
+import org.bitcoinj.params.TestNet3Params;
 import org.bitcoinj.script.Script;
 import org.bitcoinj.script.ScriptOpCodes;
 import org.bitcoinj.store.BlockStore;
@@ -49,6 +52,11 @@ public class DigitalcoinParams extends NetworkParameters {
         CoinDefinition.initCheckpoints(checkpoints);
 
         dnsSeeds = CoinDefinition.dnsSeeds;
+
+        Networks.unregister(MainNetParams.get());
+        Networks.unregister(TestNet3Params.get());
+
+        Networks.register(this);
 
     }
     private static DigitalcoinParams instance;
