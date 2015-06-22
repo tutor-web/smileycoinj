@@ -16,6 +16,7 @@
 
 package com.google.bitcoin.core;
 
+import com.google.bitcoin.params.MainNetParams;
 import com.google.bitcoin.store.BlockStore;
 import com.google.bitcoin.store.BlockStoreException;
 import com.google.bitcoin.utils.ListenerRegistration;
@@ -912,60 +913,27 @@ public abstract class AbstractBlockChain {
             throw new VerificationException("Network provided difficulty bits do not match what was calculated: " +
                     receivedDifficulty.toString(16) + " vs " + newDifficulty.toString(16));
     }
+        /**
+     * Throws an exception if the blocks difficulty is not correct.
+     */
     private void checkDifficultyTransitions(StoredBlock storedPrev, Block nextBlock) throws BlockStoreException, VerificationException {
-        checkState(lock.isLocked());
-        if (params.getId().equals(NetworkParameters.ID_TESTNET))
-        {
-            Block prev = storedPrev.getHeader();
-            checkTestnetDifficulty(storedPrev, prev, nextBlock);
-            return;
-        }
-        else if(storedPrev.getHeight()+1 < CoinDefinition.V3_FORK)
-        {
-            checkDifficultyTransitionsV1(storedPrev,nextBlock);
-            return;
-        }
-        else
-        {
-            checkDifficultyTransitionsV2(storedPrev, nextBlock);
-            return;
-        }
-
-
-    }
-    private void checkDifficultyTransitionsV1(StoredBlock storedPrev, Block nextBlock) throws BlockStoreException, VerificationException {
-
+        //Block prev = storedPrev.getHeader();
+        int algo = nextBlock.getAlgo();
+        BigInteger proofOfWorkLimit = CoinDefinition.getProofOfWorkLimit(algo);
+        checkState(lock.isHeldByCurrentThread());
         Block prev = storedPrev.getHeader();
-
-        int nDifficultySwitchHeight = 476280;
-        int nInflationFixHeight = 523800;
-        int nDifficultySwitchHeightTwo = 625800;
-
-        boolean fNewDifficultyProtocol = ((storedPrev.getHeight() + 1) >= nDifficultySwitchHeight);
-        boolean fInflationFixProtocol = ((storedPrev.getHeight() + 1) >= nInflationFixHeight);
-        boolean fDifficultySwitchHeightTwo = ((storedPrev.getHeight() + 1) >= nDifficultySwitchHeightTwo /*|| fTestNet*/);
-
-        int nTargetTimespanCurrent = fInflationFixProtocol? params.targetTimespan : (params.targetTimespan*5);
-        int interval = fInflationFixProtocol? (nTargetTimespanCurrent / params.TARGET_SPACING) : (nTargetTimespanCurrent / (params.TARGET_SPACING / 2));
-
+        
         // Is this supposed to be a difficulty transition point?
-        if ((storedPrev.getHeight() + 1) % interval != 0 &&
-                (storedPrev.getHeight() + 1) != nDifficultySwitchHeight)
-        {
-
-            // TODO: Refactor this hack after 0.5 is released and we stop supporting deserialization compatibility.
-            // This should be a method of the NetworkParameters, which should in turn be using singletons and a subclass
-            // for each network type. Then each network can define its own difficulty transition rules.
-            if (params.getId().equals(NetworkParameters.ID_TESTNET) && nextBlock.getTime().after(testnetDiffDate)) {
+        if ((storedPrev.getHeight() + 1) % params.getInterval() != 0) {
+            if (params.getClass() != MainNetParams.class && nextBlock.getTime().after(testnetDiffDate)) {
                 checkTestnetDifficulty(storedPrev, prev, nextBlock);
                 return;
             }
-
             // No ... so check the difficulty didn't actually change.
             if (nextBlock.getDifficultyTarget() != prev.getDifficultyTarget())
                 throw new VerificationException("Unexpected change in difficulty at height " + storedPrev.getHeight() +
                         ": " + Long.toHexString(nextBlock.getDifficultyTarget()) + " vs " +
-                        Long.toHexString(prev.getDifficultyTarget()) + ", Interval: "+interval);
+                        Long.toHexString(prev.getDifficultyTarget()));
             return;
         }
 
@@ -974,9 +942,9 @@ public abstract class AbstractBlockChain {
         long now = System.currentTimeMillis();
         StoredBlock cursor = blockStore.get(prev.getHash());
 
-        int goBack = interval - 1;
-        if (cursor.getHeight()+1 != interval)
-            goBack = interval;
+        int goBack = params.interval - 1;
+        if (cursor.getHeight()+1 != params.interval)
+            goBack = params.interval;
 
         for (int i = 0; i < goBack; i++) {
             if (cursor == null) {
@@ -996,28 +964,19 @@ public abstract class AbstractBlockChain {
         Block blockIntervalAgo = cursor.getHeader();
         int timespan = (int) (prev.getTimeSeconds() - blockIntervalAgo.getTimeSeconds());
         // Limit the adjustment step.
-
-        int nActualTimespanMax = fNewDifficultyProtocol? (nTargetTimespanCurrent*2) : (nTargetTimespanCurrent*4);
-        int nActualTimespanMin = fNewDifficultyProtocol? (nTargetTimespanCurrent/2) : (nTargetTimespanCurrent/4);
-
-        //new for v1.0.0
-        if (fDifficultySwitchHeightTwo){
-            nActualTimespanMax = ((nTargetTimespanCurrent*75)/60);
-            nActualTimespanMin = ((nTargetTimespanCurrent*55)/73);
-        }
-
-        if (timespan < nActualTimespanMin)
-            timespan = nActualTimespanMin;
-        if (timespan > nActualTimespanMax)
-            timespan = nActualTimespanMax;
+        final int targetTimespan = params.getTargetTimespan();
+        if (timespan < targetTimespan / 4)
+            timespan = targetTimespan / 4;
+        if (timespan > targetTimespan * 4)
+            timespan = targetTimespan * 4;
 
         BigInteger newDifficulty = Utils.decodeCompactBits(prev.getDifficultyTarget());
         newDifficulty = newDifficulty.multiply(BigInteger.valueOf(timespan));
-        newDifficulty = newDifficulty.divide(BigInteger.valueOf(nTargetTimespanCurrent));
+        newDifficulty = newDifficulty.divide(BigInteger.valueOf(targetTimespan));
 
-        if (newDifficulty.compareTo(params.proofOfWorkLimit) > 0) {
+        if (newDifficulty.compareTo(CoinDefinition.getProofOfWorkLimit(algo)) > 0) {
             log.info("Difficulty hit proof of work limit: {}", newDifficulty.toString(16));
-            newDifficulty = params.proofOfWorkLimit;
+            newDifficulty = CoinDefinition.getProofOfWorkLimit(algo);
         }
 
         int accuracyBytes = (int) (nextBlock.getDifficultyTarget() >>> 24) - 3;
@@ -1026,11 +985,43 @@ public abstract class AbstractBlockChain {
         // The calculated difficulty is to a higher precision than received, so reduce here.
         BigInteger mask = BigInteger.valueOf(0xFFFFFFL).shiftLeft(accuracyBytes * 8);
         newDifficulty = newDifficulty.and(mask);
+        log.info("New Calculated Difficulty: " + newDifficulty.toString());
+        log.info("Received Difficulty: " + receivedDifficulty.toString());
 
-        if (newDifficulty.compareTo(receivedDifficulty) != 0)
+        if (newDifficulty.compareTo(receivedDifficulty) != 0) {
+            log.info("\"Network provided difficulty bits do not match what was calculated: " +
+                    receivedDifficulty.toString(16) + " vs " + newDifficulty.toString(16));
             throw new VerificationException("Network provided difficulty bits do not match what was calculated: " +
                     receivedDifficulty.toString(16) + " vs " + newDifficulty.toString(16));
+        }
     }
+
+    private void checkTestnetDifficulty(StoredBlock storedPrev, Block prev, Block next) throws VerificationException, BlockStoreException {
+        int algo = next.getAlgo();
+        checkState(lock.isHeldByCurrentThread());
+        // After 15th February 2012 the rules on the testnet change to avoid people running up the difficulty
+        // and then leaving, making it too hard to mine a block. On non-difficulty transition points, easy
+        // blocks are allowed if there has been a span of 20 minutes without one.
+        final long timeDelta = next.getTimeSeconds() - prev.getTimeSeconds();
+        // There is an integer underflow bug in litecoin-qt that means mindiff blocks are accepted when time
+        // goes backwards.
+        if (timeDelta >= 0 && timeDelta <= NetworkParameters.TARGET_SPACING * 2) {
+            // Walk backwards until we find a block that doesn't have the easiest proof of work, then check
+            // that difficulty is equal to that one.
+            StoredBlock cursor = storedPrev;
+            while (!cursor.getHeader().equals(params.getGenesisBlock()) &&
+                   cursor.getHeight() % params.getInterval() != 0 &&
+                   cursor.getHeader().getDifficultyTargetAsInteger().equals(CoinDefinition.getProofOfWorkLimit(algo)))
+                cursor = cursor.getPrev(blockStore);
+            BigInteger cursorDifficulty = cursor.getHeader().getDifficultyTargetAsInteger();
+            BigInteger newDifficulty = next.getDifficultyTargetAsInteger();
+            if (!cursorDifficulty.equals(newDifficulty))
+                throw new VerificationException("Testnet block transition that is not allowed: " +
+                    Long.toHexString(cursor.getHeader().getDifficultyTarget()) + " vs " +
+                    Long.toHexString(next.getDifficultyTarget()));
+        }
+    }
+
     private StoredBlock GetLastBlockForAlgo(StoredBlock block, int algo)
     {
 
@@ -1228,7 +1219,7 @@ public abstract class AbstractBlockChain {
                     receivedDifficulty.toString(16) + " vs " + newDifficulty.toString(16));
     }
 
-    private void checkTestnetDifficulty(StoredBlock storedPrev, Block prev, Block next) throws VerificationException, BlockStoreException {
+    private void checkTestnetDifficulty2(StoredBlock storedPrev, Block prev, Block next) throws VerificationException, BlockStoreException {
         checkState(lock.isHeldByCurrentThread());
         // After 15th February 2012 the rules on the testnet change to avoid people running up the difficulty
         // and then leaving, making it too hard to mine a block. On non-difficulty transition points, easy
