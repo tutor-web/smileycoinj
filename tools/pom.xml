@@ -21,16 +21,16 @@
   <parent>
     <groupId>com.google</groupId>
 
-    <artifactId>digitalcoinj-parent</artifactId>
-    <version>0.12-SNAPSHOT</version>
+    <artifactId>smileycoinj-parent</artifactId>
+    <version>1.0</version>
 
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>digitalcoinj-tools</artifactId>
+  <artifactId>smileycoinj-tools</artifactId>
 
-  <name>digitalcoinj Tools</name>
-  <description>A collection of useful tools that use the digitalcoinj library to perform wallet operations</description>
+  <name>smileycoinj Tools</name>
+  <description>A collection of useful tools that use the smileycoinj library to perform wallet operations</description>
 
   <build>
 
@@ -74,7 +74,7 @@
   <dependencies>
     <dependency>
       <groupId>com.google</groupId>
-      <artifactId>digitalcoinj</artifactId>
+      <artifactId>smileycoinj</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
     <dependency>

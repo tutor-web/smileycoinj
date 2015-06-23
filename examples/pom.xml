@@ -20,20 +20,20 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <groupId>com.google</groupId>
-        <artifactId>digitalcoinj-parent</artifactId>
-        <version>0.12-SNAPSHOT</version>
+        <artifactId>smileycoinj-parent</artifactId>
+        <version>1.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>digitalcoinj-examples</artifactId>
+    <artifactId>smileycoinj-examples</artifactId>
 
-    <name>digitalcoinj Examples</name>
-    <description>A collection of examples using the digitalcoinj library</description>
+    <name>smileycoinj Examples</name>
+    <description>A collection of examples using the smileycoinj library</description>
 
     <dependencies>
         <dependency>
             <groupId>com.google</groupId>
-            <artifactId>digitalcoinj</artifactId>
+            <artifactId>smileycoinj</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>

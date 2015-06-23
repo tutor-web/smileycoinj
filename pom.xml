@@ -3,8 +3,8 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.google</groupId>
-  <artifactId>digitalcoinj-parent</artifactId>
-  <version>0.12-SNAPSHOT</version>
+  <artifactId>smileycoinj-parent</artifactId>
+  <version>1.0</version>
   <packaging>pom</packaging>
 
   <modules>
@@ -26,9 +26,9 @@
         <url>http://code.google.com/p/bitcoinj/source/browse</url>
     </scm>
 
-  <name>digitalcoinj Parent</name>
-  <description>Provides the common configuration for the digitalcoinJ modules</description>
-  <url>https://github.com/HashEngineering/digitalcoinj</url>
+  <name>smileycoinj Parent</name>
+  <description>Provides the common configuration for the smileycoinJ modules</description>
+  <url>https://github.com/tutor-web/smileycoinj</url>
 
   <licenses>
     <license>
@@ -83,7 +83,7 @@
         <artifactId>slf4j-api</artifactId>
         <version>1.7.6</version>
       </dependency>
-      <!-- digitalcoinj consumers are expected to provide their own SLF4J adapters
+      <!-- smileycoinj consumers are expected to provide their own SLF4J adapters
     such as logback, slf4j-log4j12, slf4j-jcl and so on
     see http://www.slf4j.org/faq.html -->
       <dependency>
