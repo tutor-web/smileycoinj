@@ -39,9 +39,9 @@ public class CoinDefinition {
     public static final String BLOCKEXPLORER_BLOCK_PATH = "Blocks/";                 //blockr.io path
     public static final String BLOCKEXPLORER_BASE_URL_TEST = BLOCKEXPLORER_BASE_URL_PROD;
 
-    public static final String DONATION_ADDRESS = "BBYfi7P7dVaeJS4w6XrQDVuFcpYSnguNnF";  //Smileycoin donation address
+    public static final String DONATION_ADDRESS = "BGs1L33mgDz8mUAE5h3bgmuo7s9r5Et8ne";  //NEW Smileycoin donation address
 
-    public static final String UNSPENT_API_URL = "http://dgc.blockr.io/api/v1/address/unspent/";
+    public static final String UNSPENT_API_URL = "http://dgc.blockr.io/api/v1/address/unspent/"; // What is the smiley equivalent???
     public enum UnspentAPIType {
         BitEasy,
         Blockr,
@@ -58,17 +58,11 @@ public class CoinDefinition {
     public static boolean checkpointFileSupport = true;
     public static int checkpointDaysBack = 21;
     //Original Values
-    public static final int TARGET_TIMESPAN_0 = (int)(6 * 60 * 3 * 20);  // 3.5 days per difficulty cycle, on average.
-    public static final int TARGET_SPACING_0 = (int)(1 * 20);  // 20 seconds per block.
-    public static final int INTERVAL_0 = TARGET_TIMESPAN_0 / TARGET_SPACING_0;  //1080 blocks
-
-    public static final int TARGET_TIMESPAN_1 = (int)(108 * 20);  // 36 minutes per difficulty cycle, on average.
-    public static final int TARGET_SPACING_1 = (int)(1 * 20);  // 20 seconds per block.
-    public static final int INTERVAL_1 = TARGET_TIMESPAN_1 / TARGET_SPACING_1;  //108 blocks
 
     public static final int TARGET_TIMESPAN = (int)(5 * 24 * 60 * 60);  // 72 minutes per difficulty cycle, on average.
     public static final int TARGET_SPACING = (int)(3 * 60);  // 40 seconds per block.
     public static final int INTERVAL = TARGET_TIMESPAN / TARGET_SPACING;  //108 blocks
+
 
     private static int nDifficultySwitchHeight = 476280;    //retarget every 108 instead of 1080 blocks; adjust by +100%/-50% instead of +400/-75%
     private static int nInflationFixHeight = 523800;        //increase block time to 40 from 20 seconds; decrease reward from 20 to 15 DGC
@@ -77,17 +71,19 @@ public class CoinDefinition {
     public static final int MAX_BLOCK_ALGO_COUNT = 3;
 
 
-
     public static final int getInterval(int height, boolean testNet) {
-            return INTERVAL;      //108
+            return getTargetTimespan(height, testNet) / TARGET_SPACING;
     }
     public static final int getIntervalCheckpoints() {
-            return INTERVAL_0;    //1080
+            return INTERVAL;    //Used to be INTERVAL_0
+    }
 
-    }
     public static final int getTargetTimespan(int height, boolean testNet) {
-            return TARGET_TIMESPAN;    //72 min
+            return height >=97050 ? 3*60*60 //3 hours after 97050 fork
+				   : 5*24*60*60; // 5 days before
     }
+
+
     public static int getMaxTimeSpan(int value, int height, boolean testNet)
     {
         if(height < nDifficultySwitchHeight)
@@ -106,10 +102,11 @@ public class CoinDefinition {
         else
             return value * 55 / 73;
     }
-    public static int spendableCoinbaseDepth = 5; //main.h: static const int COINBASE_MATURITY
-    public static final BigInteger MAX_MONEY = BigInteger.valueOf(50000000).multiply(Utils.COIN);                 //main.h:  MAX_MONEY
-    //public static final String MAX_MONEY_STRING = "200000000";     //main.h:  MAX_MONEY
 
+    public static int spendableCoinbaseDepth = 5; //main.h: static const int COINBASE_MATURITY
+  
+    public static final BigInteger MAX_MONEY = new BigInteger("50000000000").multiply(Utils.COIN); //BigInteger.valueOf(50000000000).multiply(Utils.COIN);                 //main.h:  MAX_MONEY
+    
     public static final BigInteger DEFAULT_MIN_TX_FEE = BigInteger.valueOf(100000);   // MIN_TX_FEE
     public static final BigInteger DUST_LIMIT = BigInteger.valueOf(1000000); //main.h CTransaction::GetMinFee        0.01 coins      0.01 coins
 
@@ -134,7 +131,7 @@ public class CoinDefinition {
     //
     public static final int AddressHeader = 25;             //base58.h CBitcoinAddress::PUBKEY_ADDRESS
     public static final int p2shHeader = 5;             //base58.h CBitcoinAddress::SCRIPT_ADDRESS
-    public static final boolean allowBitcoinPrivateKey = true; //for backward compatibility with previous version of digitalcoin
+    public static final boolean allowBitcoinPrivateKey = true; //for backward compatibility with previous version of smileycoin
     public static final long PacketMagic = 0xfbc0b6db;      //0xfb, 0xc0, 0xb6, 0xdb
 
     //Genesis Block Information from main.cpp: LoadBlockIndex
@@ -144,7 +141,7 @@ public class CoinDefinition {
     static public String genesisHash = "660f734cf6c6d16111bde201bbd2122873f2f2c078b969779b9d4c99732354fd"; //main.cpp: hashGenesisBlock
     static public int genesisBlockValue = 10000;                                                              //main.cpp: LoadBlockIndex
     //taken from the raw data of the block explorer
-    static public String genesisTxInBytes = "04ffff001d0104494e592054696d65732031382f4175672f3230313420426974636f696e27732050726963652046616c6c73203132252c20746f204c6f776573742056616c75652053696e6365204d6179";   //"Digitalcoin, A Currency for a Digital Age"
+    static public String genesisTxInBytes = "04ffff001d0104494e592054696d65732031382f4175672f3230313420426974636f696e27732050726963652046616c6c73203132252c20746f204c6f776573742056616c75652053696e6365204d6179";
     static public String genesisTxOutBytes = "040184710fa689ad5023690c80f3a49c8f13f8d45b8c857fbcbc8bc4a8e4d3eb4b10f4d4604fa08dce601aaf0f470216fe1b51850b4acf21b179c45070ac7b03a9";
 
     //net.cpp strDNSSeed
@@ -155,7 +152,7 @@ public class CoinDefinition {
     public static int minBroadcastConnections = 1;   //0 for default; we need more peers.
 
     //
-    // TestNet - digitalcoin - not tested
+    // TestNet - smileycoin - not tested
     //
     public static final boolean supportsTestNet = false;
     public static final int testnetAddressHeader = 111;             //base58.h CBitcoinAddress::PUBKEY_ADDRESS_TEST
@@ -165,9 +162,6 @@ public class CoinDefinition {
     static public long testnetGenesisBlockDifficultyTarget = (0x1e0ffff0L);         //main.cpp: LoadBlockIndex
     static public long testnetGenesisBlockTime = 1408974288;                       //main.cpp: LoadBlockIndex
     static public long testnetGenesisBlockNonce = (386703170);                         //main.cpp: LoadBlockIndex
-
-
-
 
 
     public static final boolean usingNewDifficultyProtocol(int height)
@@ -195,7 +189,7 @@ public class CoinDefinition {
 
     public static int subsidyDecreaseBlockCount = 1226400;     //main.cpp GetBlockValue(height, fee)
 
-    public static BigInteger proofOfWorkLimit = Utils.decodeCompactBits(0x1e0fffffL);  //main.cpp bnProofOfWorkLimit (~uint256(0) >> 20); // digitalcoin: starting difficulty is 1 / 2^12
+    public static BigInteger proofOfWorkLimit = Utils.decodeCompactBits(0x1e0fffffL);  //main.cpp bnProofOfWorkLimit (~uint256(0) >> 20); // smileycoin: starting difficulty is 1 / 2^12
 
     public static BigInteger [] proofOfWorkLimits = new BigInteger[] {
             proofOfWorkLimit,proofOfWorkLimit,proofOfWorkLimit,proofOfWorkLimit,proofOfWorkLimit };
