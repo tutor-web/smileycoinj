@@ -41,19 +41,19 @@
 
   <issueManagement>
     <system>Google Code</system>
-    <url>http://code.google.com/p/digitalcoinj/issues/list</url>
+    <url>http://code.google.com/p/smileycoinj/issues/list</url>
   </issueManagement>
 
   <mailingLists>
     <mailingList>
-      <name>digitalcoinj Google Group</name>
-      <post>https://groups.google.com/forum/#!forum/digitalcoinj</post>
+      <name>smileycoinj Google Group</name>
+      <post>https://groups.google.com/forum/#!forum/smileycoinj</post>
     </mailingList>
   </mailingLists>
 
   <repositories>
     <repository>
-        <id>digitalcoinj-distribution</id>
+        <id>smileycoinj-distribution</id>
         <url>https://distribution.bitcoinj.googlecode.com/git/releases</url>
     </repository>
   </repositories>
