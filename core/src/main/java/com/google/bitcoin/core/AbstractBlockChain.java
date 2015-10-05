@@ -922,9 +922,12 @@ public abstract class AbstractBlockChain {
         BigInteger proofOfWorkLimit = CoinDefinition.getProofOfWorkLimit(algo);
         checkState(lock.isHeldByCurrentThread());
         Block prev = storedPrev.getHeader();
+
+	int nTargetTimespanCurrent = CoinDefinition.getTargetTimespan(storedPrev.getHeight()+1, false);
+        int interval = CoinDefinition.getInterval(storedPrev.getHeight()+1, false);
         
         // Is this supposed to be a difficulty transition point?
-        if ((storedPrev.getHeight() + 1) % params.getInterval() != 0) {
+        if ((storedPrev.getHeight() + 1) % interval != 0) {
             if (params.getClass() != MainNetParams.class && nextBlock.getTime().after(testnetDiffDate)) {
                 checkTestnetDifficulty(storedPrev, prev, nextBlock);
                 return;
@@ -942,9 +945,9 @@ public abstract class AbstractBlockChain {
         long now = System.currentTimeMillis();
         StoredBlock cursor = blockStore.get(prev.getHash());
 
-        int goBack = params.interval - 1;
-        if (cursor.getHeight()+1 != params.interval)
-            goBack = params.interval;
+        int goBack = interval - 1;
+        if (cursor.getHeight()+1 != interval)
+            goBack = interval;
 
         for (int i = 0; i < goBack; i++) {
             if (cursor == null) {
@@ -964,7 +967,7 @@ public abstract class AbstractBlockChain {
         Block blockIntervalAgo = cursor.getHeader();
         int timespan = (int) (prev.getTimeSeconds() - blockIntervalAgo.getTimeSeconds());
         // Limit the adjustment step.
-        final int targetTimespan = params.getTargetTimespan();
+        final int targetTimespan = nTargetTimespanCurrent;
         if (timespan < targetTimespan / 4)
             timespan = targetTimespan / 4;
         if (timespan > targetTimespan * 4)

@@ -59,37 +59,46 @@ public class CoinDefinition {
     public static int checkpointDaysBack = 21;
     //Original Values
 
-    public static final int TARGET_TIMESPAN = (int)(5 * 24 * 60 * 60);  // 72 minutes per difficulty cycle, on average.
+
+//Original Values
+    public static final int TARGET_TIMESPAN_0 = (int)(5 * 24 * 60 * 60);  // 3.5 days per difficulty cycle, on average.
+    public static final int TARGET_SPACING_0 = (int)(3 * 60);  // 20 seconds per block.
+    public static final int INTERVAL_0 = TARGET_TIMESPAN_0 / TARGET_SPACING_0;  //1080 blocks
+
+    public static final int TARGET_TIMESPAN = (int)(3*60*60);  // 72 minutes per difficulty cycle, on average.
     public static final int TARGET_SPACING = (int)(3 * 60);  // 40 seconds per block.
     public static final int INTERVAL = TARGET_TIMESPAN / TARGET_SPACING;  //108 blocks
 
-
-    private static int nDifficultySwitchHeight = 476280;    //retarget every 108 instead of 1080 blocks; adjust by +100%/-50% instead of +400/-75%
+    private static int nDifficultySwitchHeight = 97050;    //retarget every 108 instead of 1080 blocks; adjust by +100%/-50% instead of +400/-75%
     private static int nInflationFixHeight = 523800;        //increase block time to 40 from 20 seconds; decrease reward from 20 to 15 DGC
-    private static int nDifficultySwitchHeightTwo = 625800; //retarget adjust changed
+    private static int nDifficultySwitchHeightTwo = 97050; //retarget adjust changed
     public static final int V3_FORK = 1028000;
     public static final int MAX_BLOCK_ALGO_COUNT = 3;
 
 
+
     public static final int getInterval(int height, boolean testNet) {
-            return getTargetTimespan(height, testNet) / TARGET_SPACING;
+        if(height < nDifficultySwitchHeight)
+            return INTERVAL_0;    //1080
+        else
+            return INTERVAL;      //108
     }
+
     public static final int getIntervalCheckpoints() {
-            return INTERVAL;    //Used to be INTERVAL_0
-    }
+            return INTERVAL_0;    //1080
 
+    }
     public static final int getTargetTimespan(int height, boolean testNet) {
-            return height >=97050 ? 3*60*60 //3 hours after 97050 fork
-				   : 5*24*60*60; // 5 days before
+        if(height < nDifficultySwitchHeight)
+            return TARGET_TIMESPAN_0;  //3.5 days
+        else
+            return TARGET_TIMESPAN;    //72 min
     }
-
 
     public static int getMaxTimeSpan(int value, int height, boolean testNet)
     {
         if(height < nDifficultySwitchHeight)
             return value * 4;
-        else if(height < nInflationFixHeight)
-            return value * 2;
         else
             return value * 75 / 60;
     }
@@ -97,8 +106,6 @@ public class CoinDefinition {
     {
         if(height < nDifficultySwitchHeight)
             return value / 4;
-        else if(height < nInflationFixHeight)
-            return value / 2;
         else
             return value * 55 / 73;
     }
