@@ -115,7 +115,7 @@ public class CoinDefinition {
     public static final BigInteger MAX_MONEY = new BigInteger("50000000000").multiply(Utils.COIN); //BigInteger.valueOf(50000000000).multiply(Utils.COIN);                 //main.h:  MAX_MONEY
     
     public static final BigInteger DEFAULT_MIN_TX_FEE = BigInteger.valueOf(100000000);   // MIN_TX_FEE
-    public static final BigInteger DUST_LIMIT = BigInteger.valueOf(1000000000); //main.h CTransaction::GetMinFee        0.01 coins      0.01 coins
+    public static final BigInteger DUST_LIMIT = BigInteger.valueOf(1000000); //main.h CTransaction::GetMinFee        0.01 coins      0.01 coins
 
     public static final int PROTOCOL_VERSION = 70002;          //version.h PROTOCOL_VERSION
     public static final int MIN_PROTOCOL_VERSION = 70002;        //version.h MIN_PROTO_VERSION - eliminate 60001 which are on the wrong fork
