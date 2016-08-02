@@ -153,7 +153,7 @@ public class CoinDefinition {
 
     //net.cpp strDNSSeed
     static public String[] dnsSeeds = new String[] {
-            "box.smileyco.in",
+            "dnsseed.smileyco.in",
      };
 
     public static int minBroadcastConnections = 1;   //0 for default; we need more peers.

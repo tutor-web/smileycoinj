@@ -917,6 +917,7 @@ public abstract class AbstractBlockChain {
      * Throws an exception if the blocks difficulty is not correct.
      */
     private void checkDifficultyTransitions(StoredBlock storedPrev, Block nextBlock) throws BlockStoreException, VerificationException {
+
         //Block prev = storedPrev.getHeader();
         int algo = nextBlock.getAlgo();
         BigInteger proofOfWorkLimit = CoinDefinition.getProofOfWorkLimit(algo);
@@ -957,39 +958,71 @@ public abstract class AbstractBlockChain {
             }
             cursor = blockStore.get(cursor.getHeader().getPrevBlockHash());
         }
+
         long elapsed = System.currentTimeMillis() - now;
         if (elapsed > 50)
             log.info("Difficulty transition traversal took {}msec", elapsed);
 
         // Check if our cursor is null.  If it is, we've used checkpoints to restore.
         if(cursor == null) return;
+	log.info("BLOCKDEBUG2: DIFFICULTY CHANGE AT HEIGHT "+storedPrev.getHeight()+1);
+	log.info("BLOCKDEBUG2: Height of previous block "+storedPrev.getHeight()+1);
+	log.info("BLOCKDEBUG2: Weve chosen a cursor! Its height is .... "+cursor.getHeight());
+	log.info("BLOCKDEBUG2: This is where we'd calculate previous.timestamp - cursor.timestamp");
 
+
+	log.info("BLOCKDEBUG: STARTING A NEW TRANSITION ....................................");
+	log.info("BLOCKDEBUG: storedPrev : "+storedPrev.getHeight());
+	log.info("BLOCKDEBUG: storedPrev hash : "+storedPrev.getHeader().getHash());
+	log.info("BLOCKDEBUG: We hit a difficulty transition point at height "+(storedPrev.getHeight()+1));
         Block blockIntervalAgo = cursor.getHeader();
         int timespan = (int) (prev.getTimeSeconds() - blockIntervalAgo.getTimeSeconds());
+	log.info("BLOCKDEBUG: Timestamp of previous block: "+prev.getTimeSeconds());
+	log.info("BLOCKDEBUG: IMPORTANT!!! THis is the height of the cursor, for which we need to find the timestamp : "+cursor.getHeight());
+	log.info("BLOCKDEBUG: Timestamp of last difficulty change transition: "+blockIntervalAgo.getTimeSeconds());
+	log.info("BLOCKDEBUG: Calculated timespan: "+timespan);
         // Limit the adjustment step.
         final int targetTimespan = nTargetTimespanCurrent;
         if (timespan < targetTimespan / 4)
             timespan = targetTimespan / 4;
         if (timespan > targetTimespan * 4)
             timespan = targetTimespan * 4;
-
+	log.info("BLOCKDEBUG: Timespan after target_timespan recalculation: "+timespan);
+	log.info("BLOCKDEBUG: TARGET_TIMESPAN: "+targetTimespan);
         BigInteger newDifficulty = Utils.decodeCompactBits(prev.getDifficultyTarget());
-        newDifficulty = newDifficulty.multiply(BigInteger.valueOf(timespan));
+	log.info("BLOCKDEBUG: Target of previous block (compact): "+prev.getDifficultyTarget());
+	log.info("BLOCKDEBUG: Target of previous block (decodeCompact): "+newDifficulty);
+	log.info("BLOCKDEBUG: Target of previous block (decodeCompact.toString, just to see if there's a difference): "+newDifficulty.toString());
+	log.info("BLOCKDEBUG: Target of previous block (hex): "+newDifficulty.toString(16));
+	log.info("BLOCKDEBUG: --------------------------- CALCULATING -------------------------- ");
+        newDifficulty = newDifficulty.multiply(BigInteger.valueOf(timespan));	
         newDifficulty = newDifficulty.divide(BigInteger.valueOf(targetTimespan));
+	log.info("BLOCKDEBUG: New target (decodeCompact): "+newDifficulty);
+	log.info("BLOCKDEBUG: New target (hex): "+newDifficulty.toString(16));
+
+	// Here we deem this a difficulty transition if THIS height (the previous +1 height) is mod interval = 0
+	// We calculate the timespan with previousblocktime-blockintervalago.time
+	// Blockintervalago is calculated from the cursor
+	// THe cursor is calculated 
+
 
         if (newDifficulty.compareTo(CoinDefinition.getProofOfWorkLimit(algo)) > 0) {
-            log.info("Difficulty hit proof of work limit: {}", newDifficulty.toString(16));
+            log.info("BLOCKDEBUG: Difficulty hit proof of work limit: {}", newDifficulty.toString(16));
             newDifficulty = CoinDefinition.getProofOfWorkLimit(algo);
         }
+	log.info("BLOCKDEBUG: New target after max_pow check (decodeCompact) "+newDifficulty);
 
         int accuracyBytes = (int) (nextBlock.getDifficultyTarget() >>> 24) - 3;
         BigInteger receivedDifficulty = nextBlock.getDifficultyTargetAsInteger();
-
+	log.info("BLOCKDEBUG: Expected target: "+receivedDifficulty.toString());
         // The calculated difficulty is to a higher precision than received, so reduce here.
         BigInteger mask = BigInteger.valueOf(0xFFFFFFL).shiftLeft(accuracyBytes * 8);
         newDifficulty = newDifficulty.and(mask);
-        log.info("New Calculated Difficulty: " + newDifficulty.toString());
-        log.info("Received Difficulty: " + receivedDifficulty.toString());
+	log.info("BLOCKDEBUG: ------------------------------------------> Final Comparison! : ");
+        log.info("BLOCKDEBUG: New Calculated Difficulty (decodeCompact) : " + newDifficulty.toString());
+        log.info("BLOCKDEBUG: New Calculated Difficulty: (hex)" + newDifficulty.toString(16));
+        log.info("BLOCKDEBUG: Received Difficulty: (decodeCompact)" + receivedDifficulty.toString());
+        log.info("BLOCKDEBUG: Received Difficulty: (hex)" + receivedDifficulty.toString(16));
 
         if (newDifficulty.compareTo(receivedDifficulty) != 0) {
             log.info("\"Network provided difficulty bits do not match what was calculated: " +
@@ -1406,4 +1439,5 @@ public abstract class AbstractBlockChain {
         falsePositiveTrend = 0;
         previousFalsePositiveRate = 0;
     }
+
 }

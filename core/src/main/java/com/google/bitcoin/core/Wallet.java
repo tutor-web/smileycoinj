@@ -501,7 +501,8 @@ public class Wallet implements Serializable, BlockChainListener, PeerFilterProvi
      * Returns a wallet deserialized from the given file.
      */
     public static Wallet loadFromFile(File f) throws UnreadableWalletException {
-        try {
+	return null;
+        /*try {
             FileInputStream stream = null;
             try {
                 stream = new FileInputStream(f);
@@ -511,7 +512,7 @@ public class Wallet implements Serializable, BlockChainListener, PeerFilterProvi
             }
         } catch (IOException e) {
             throw new UnreadableWalletException("Could not open file", e);
-        }
+        }*/
     }
     
     public boolean isConsistent() {
